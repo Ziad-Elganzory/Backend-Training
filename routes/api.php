@@ -1,6 +1,7 @@
 <?php
 
 use App\Factories\ExporterFactory;
+use App\Http\Controllers\NotificationChannelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,3 +19,5 @@ Route::get('/export/{format}', function (Request $request, string $format) {
         ->header('Content-Type', 'text/' . $format)
         ->header('Content-Disposition', 'attachment; filename="export.' . $format . '"');
 });
+
+Route::post('/notifications/send/{channel}', [NotificationChannelController::class, 'send']);
