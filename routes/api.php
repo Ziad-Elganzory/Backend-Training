@@ -2,6 +2,7 @@
 
 use App\Factories\ExporterFactory;
 use App\Http\Controllers\NotificationChannelController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +22,5 @@ Route::get('/export/{format}', function (Request $request, string $format) {
 });
 
 Route::post('/notifications/send/{channel}', [NotificationChannelController::class, 'send']);
+
+Route::post('reports/export',[ReportController::class, 'export']);
