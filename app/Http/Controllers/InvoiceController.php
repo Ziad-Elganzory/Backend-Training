@@ -9,9 +9,8 @@ class InvoiceController extends Controller
 {
     public function show()
     {
-        $tax = app(TaxCalculatorService::class)->calculate(1000);
         return response()->json([
-            'tax' => $tax
+            'tax' => app(TaxCalculatorService::class)->calculate(1000)
         ]);
     }
 }

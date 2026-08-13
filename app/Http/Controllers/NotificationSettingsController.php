@@ -22,6 +22,11 @@ class NotificationSettingsController extends Controller
     {
         $key = $request->input('key');
         $value = $request->input('value');
+        if(!in_array($key, ['email_enabled', 'sms_enabled', 'default_channel'])){
+            return response()->json([
+                'message' => 'Invalid key',
+            ], 400);
+        }
         $this->notificationSettingsManager->set($key, $value);
         return response()->json([
             'message' => 'Notification settings updated successfully',

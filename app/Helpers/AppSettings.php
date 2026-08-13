@@ -28,7 +28,9 @@ class AppSettings
         $this->settings[$key] = $value;
     }
 
-    public function __clone(){}
+    public function __clone(){
+        throw new \Exception('Cannot clone a singleton');
+    }
 
     public function __wakeup()
     {
