@@ -11,4 +11,4 @@
 - What should a factory return: unrelated objects or variants of the same family?
     - It Should Return Variants of the same family to achive the single responspility principle
 - How does Laravel’s IoC container make factories more powerful?
-    - it makes it powerfull by automatically resolving dependencies , injecting services via closures , and allow smart state modifications
+    - The IoC container lets the factory create classes with their dependencies automatically, so the factory does not need to manually pass constructor dependencies.”
