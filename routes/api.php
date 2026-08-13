@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\NotificationSettingsController;
 use App\Http\Controllers\SingletonController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,3 +13,8 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/settings', [SingletonController::class,'settings']);
 Route::get('/invoice',[InvoiceController::class,'show']);
+
+Route::group(['prefix' => 'notifications'], function(){
+    Route::get('/settings',[NotificationSettingsController::class,'getSettings']);
+    Route::patch('/settings',[NotificationSettingsController::class,'updateSettings']);
+});

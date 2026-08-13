@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\NotificationSettingsManager;
 use App\Services\TaxCalculatorService;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,6 +15,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(TaxCalculatorService::class, function($app){
             return new TaxCalculatorService();
+        });
+
+        $this->app->singleton(NotificationSettingsManager::class, function($app){
+            return new NotificationSettingsManager();
         });
     }
 
