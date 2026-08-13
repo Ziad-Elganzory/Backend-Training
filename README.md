@@ -1,5 +1,4 @@
-## 1.14 Questions For You
-Answer these in your own words:
+## Answer these in your own words:
 - What problem does Singleton solve?
     - Singleton Ensures that the class has just a single instance and Provide a global access point to that instance
 - Why is the constructor usually private?
