@@ -7,14 +7,8 @@ use App\Factories\ShippingStrategyFactory;
 
 class ShippingCalculator
 {
-    public function __construct(
-        private ShippingStrategyFactory $factory
-    )
-    {}
-
-    public function calculate(float $weight, float $orderTotal, string $strategy)
+    public function calculate(float $weight, float $orderTotal, ShippingCostStrategyInterface $strategy)
     {
-        return $this->factory->make($strategy)->calculate($weight,$orderTotal);
-        
+        return $strategy->calculate($weight,$orderTotal);   
     }
 }
