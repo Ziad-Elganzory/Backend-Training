@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Observers\CreateUserProfileObserver;
 use App\Observers\LogUserRegistrationObserver;
 use App\Observers\SendWelcomeEmailObserver;
@@ -32,3 +33,5 @@ Route::post("/user/register",function(Request $request){
 });
 
 Route::post("/orders/place",[OrderController::class,'placeOrder']);
+
+Route::post('/payments/success',[PaymentController::class,'createPayment']);
