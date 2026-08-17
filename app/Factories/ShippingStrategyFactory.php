@@ -17,7 +17,7 @@ class ShippingStrategyFactory
             "flat_rate"=> FlatRateShippingStrategy::class,
             "weight_based" => WeightBasedShippingStrategy::class,
             "free"=> FreeShippingStrategy::class,
-            "default" => throw new Exception("Unsupported Strategy")
+            default => throw new Exception("Unsupported Strategy")
         };
         return $this->container->make($class);
     }
