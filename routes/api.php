@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrderController;
 use App\Observers\CreateUserProfileObserver;
 use App\Observers\LogUserRegistrationObserver;
 use App\Observers\SendWelcomeEmailObserver;
@@ -29,3 +30,5 @@ Route::post("/user/register",function(Request $request){
         "message" => "User Created Successfully"
     ],200);
 });
+
+Route::post("/orders/place",[OrderController::class,'placeOrder']);
