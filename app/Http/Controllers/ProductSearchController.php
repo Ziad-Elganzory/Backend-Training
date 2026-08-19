@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Builders\ProductSearchBuilder;
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 
 class ProductSearchController extends Controller
 {
@@ -38,8 +39,10 @@ class ProductSearchController extends Controller
         try{
             $productSearch = $builder->build();
             return response()->json($productSearch);
-        } catch(\Exception $e){
-            return response()->json($e,400);
+        } catch(InvalidArgumentException $e){
+            return response()->json([
+                "error" => $e->getMessage()
+            ],400);
         }
     }
 }

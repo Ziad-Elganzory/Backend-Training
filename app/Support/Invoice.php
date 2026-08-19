@@ -5,7 +5,7 @@ namespace App\Support;
 class Invoice
 {
     /**
-     * @param list<array{name: string, price: float, qty: float, line_total: float}> $items
+     * @param list<array{name: string, price: float, qty: int, line_total: float}> $items
      */
     public function __construct(
         public string $customer,

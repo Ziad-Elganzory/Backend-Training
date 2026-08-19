@@ -14,13 +14,13 @@ class InvoiceBuilder
     private float $discount = 0;
     private ?string $notes = null;
 
-    public function forCustomer(string $customer)
+    public function forCustomer(string $customer) :self
     {
         $this->customer = $customer;
         return $this;
     }
 
-    public function addItem(string $name, float $price , int $qty)
+    public function addItem(string $name, float $price , int $qty) :self
     {
         $this->items[] = [
             "name" => $name,
@@ -30,19 +30,19 @@ class InvoiceBuilder
         return $this;
     }
 
-    public function withTax(float $tax)
+    public function withTax(float $tax) :self
     {
         $this->taxPercent = $tax;
         return $this;
     }
 
-    public function withDiscount(float $discount)
+    public function withDiscount(float $discount) :self
     {
         $this->discount = $discount;
         return $this;
     }
 
-    public function withNotes(string $notes)
+    public function withNotes(string $notes) :self
     {
         $this->notes = $notes;
         return $this;

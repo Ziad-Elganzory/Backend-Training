@@ -3,6 +3,7 @@
 namespace App\Builders;
 
 use App\Support\ProductSearch;
+use InvalidArgumentException;
 
 class ProductSearchBuilder
 {
@@ -13,34 +14,40 @@ class ProductSearchBuilder
     private string $sort = 'name_asc';
     private int $limit = 15;
 
-    public function named(string $name){
+    public function named(string $name) :self
+    {
         $this->name = $name;
         return $this;
     }
-    public function minPrice(float $price){
+    public function minPrice(float $price) :self
+    {
         $this->minPrice = $price;
         return $this;
     }
-    public function maxPrice(float $price){
+    public function maxPrice(float $price) :self
+    {
         $this->maxPrice = $price;
         return $this;
     }
-    public function category(string $category){
+    public function category(string $category) :self
+    {
         $this->category = $category;
         return $this;
     }
-    public function sortBy(string $sort){
+    public function sortBy(string $sort) :self
+    {
         $this->sort = $sort;
         return $this;
     }
-    public function limit(int $limit){
+    public function limit(int $limit) :self
+    {
         $this->limit = $limit;
         return $this;
     }
     public function build():ProductSearch
     {
-        if($this->minPrice > $this->maxPrice){
-            throw new \Exception("min price can't exceed max price");
+        if($this->minPrice!== null && $this->maxPrice !== null && $this->minPrice > $this->maxPrice){
+            throw new InvalidArgumentException("min price can't exceed max price");
         }
 
         $filters = [];

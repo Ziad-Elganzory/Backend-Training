@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Builders\InvoiceBuilder;
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 
 class InvoiceController extends Controller
 {
@@ -32,12 +33,10 @@ class InvoiceController extends Controller
 
         try{
             $invoice = $builder->build();
+            return response()->json($invoice);
+        } catch(InvalidArgumentException $e){
             return response()->json([
-                "invoice" => $invoice
-            ]);
-        } catch(\Exception $e){
-            return response()->json([
-                "error" => $e
+                "error" => $e->getMessage()
             ],400);
         }
     }

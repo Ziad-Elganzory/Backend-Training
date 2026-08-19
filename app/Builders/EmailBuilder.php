@@ -14,31 +14,31 @@ class EmailBuilder
     /** @var list<string> */
     private array $attachments = [];
 
-    public function to(string $email)
+    public function to(string $email) :self
     {
         $this->to = $email;
 
         return $this;
     }
 
-    public function subject(string $subject)
+    public function subject(string $subject) :self
     {
         $this->subject = $subject;
         return $this;
     }
-    public function body(string $body)
+    public function body(string $body) :self
     {
         $this->body = $body;
         return $this;
     }
 
-    public function cc(string $cc)
+    public function cc(string $cc) :self
     {
         $this->cc[] = $cc;
         return $this;
     }
 
-    public function attach(string $doc)
+    public function attach(string $doc) :self
     {
         $this->attachments[] = $doc;
         return $this;
@@ -46,7 +46,9 @@ class EmailBuilder
 
     public function build(): EmailMessage
     {
-        if($this->to === null) throw new \InvalidArgumentException("Email recipient is required.");
+        if($this->to === null){
+            throw new \InvalidArgumentException("Email recipient is required.");
+        }
         
         return new EmailMessage(
             to: $this->to,

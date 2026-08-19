@@ -6,7 +6,7 @@ class ProductSearch
 {
     /**
      * 
-     * @param list<array{name: ?string, minPrice: ?float, maxPrice: ?float, category: ?string}> $filters
+     * @param array{name: ?string, min_price: ?float, max_price: ?float, category: ?string} $filters
      */
     public function __construct(
         public array $filters,
