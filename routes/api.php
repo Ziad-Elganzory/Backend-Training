@@ -2,6 +2,7 @@
 
 use App\Builders\EmailBuilder;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ProductSearchController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +22,5 @@ Route::get('/email',function(){
 });
 
 Route::post("/invoices/build",[InvoiceController::class,'build']);
+
+Route::post("/products/search",[ProductSearchController::class,'search']);
