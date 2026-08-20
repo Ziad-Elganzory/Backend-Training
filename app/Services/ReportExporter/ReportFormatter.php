@@ -2,7 +2,6 @@
 
 namespace App\Services\ReportExporter;
 
-use App\Factories\ReportFormatterFactory;
 use InvalidArgumentException;
 
 class ReportFormatter

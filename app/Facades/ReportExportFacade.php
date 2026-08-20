@@ -5,6 +5,7 @@ namespace App\Facades;
 use App\Services\ReportExporter\ReportAuditor;
 use App\Services\ReportExporter\ReportFormatter;
 use App\Services\ReportExporter\ReportStorage;
+use InvalidArgumentException;
 
 class ReportExportFacade
 {
@@ -14,6 +15,12 @@ class ReportExportFacade
         private ReportStorage $storage
     ){}
     public function export(array $data){
+        if ($data['title'] === '') {
+            throw new InvalidArgumentException('Title is required.');
+        }
+        if ($data['rows'] === []) {
+            throw new InvalidArgumentException('Report must have at least one row.');
+        }
         $format = $this->formatter->format($data['format'],[
             "title" => $data["title"],
             "rows" => $data["rows"]
@@ -22,7 +29,7 @@ class ReportExportFacade
         $this->auditor->audit();
 
         return [
-            "titel"=> $data["title"],
+            "title"=> $data["title"],
             "format" => $data["format"],
             "path"=> $path,
             "content" => $format

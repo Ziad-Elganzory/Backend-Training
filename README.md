@@ -1,7 +1,7 @@
 ## Answer in your own words:
 
 1. What problem does Facade Pattern solve?
-    - If the controller has alot of actions and services used , the facade gathers those operations in one door to make the facade reusable if other controllers require the same operations in the same sequence
+    - Facade hides a complicated subsystem behind one simple method, so callers do not need to know every inner service or repeat the same sequence.
 2. Why is a class that only wraps one other class with the same methods not a real Facade?
     - In that case It becomes an Extra layer not a facade since both do the same operations
 3. What is the difference between Facade and Builder?
