@@ -2,10 +2,13 @@
 
 namespace App\Services\ReportExporter;
 
+use Illuminate\Support\Str;
+
 class ReportStorage
 {
-    public function store(string $path)
+    public function store(string $title, string $format, string $content): string
     {
-        return $path;
+        $slug = Str::slug($title);
+        return "storage/reports/{$slug}.{$format}";
     }
 }

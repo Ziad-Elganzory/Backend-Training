@@ -25,7 +25,7 @@ class ReportExportFacade
             "title" => $data["title"],
             "rows" => $data["rows"]
         ]);
-        $path = $this->storage->store("/path/to/file");
+        $path = $this->storage->store($data['title'], $data['format'], $format);
         $this->auditor->audit();
 
         return [
