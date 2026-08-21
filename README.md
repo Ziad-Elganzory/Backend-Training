@@ -1,58 +1,28 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Answer in your own words:
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
-```
-
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. What problem does caching solve?
+	- Caching avoids repeating expensive work (like the same DB query) on every request by storing the result temporarily under a key and reusing it until it expires or is invalidated.
+2. What is a cache hit and a cache miss?
+	- Cache hit: the key exists in the store and is still valid, so we return the saved value and skip the expensive work.
+	- Cache miss: the key is missing or expired, so we must compute the value, store it, then return it.
+3. Why is Redis a good cache store for this project?
+	- Redis keeps data in memory (fast), supports tags and locks, and can be shared by all Sail/PHP workers — better than database/file cache for this lesson and for production-style caching.
+4. Why is `Cache::remember()` better than manual get/put?
+	- `remember()` does get-or-compute-and-put in one call, so the miss/hit flow stays in one place and you are less likely to forget the `put` step.
+5. What is cache invalidation, and why is it hard?
+	- Invalidation means deleting or refreshing a cached value when the real data changes (for example `Cache::forget()` or a tag flush). It is hard because you must know every related key, and wrong timing causes either stale data or too many rebuilds.
+6. What is a cache stampede?
+	- When a cache key expires and many requests miss at the same time, they all rebuild the expensive value together and overload the database. A Redis lock (or flexible refresh) lets one request rebuild while others wait or reuse.
+7. When should you avoid caching?
+	- When the data must be exact right now (money, stock, payment status, auth decisions)
+	- When user-specific data would sit under a shared key
+	- When the flow is write-heavy
+	- When the query is already tiny and cheap
+	- When you cannot invalidate safely
+8. What is the difference between request memoization and Redis `remember()`?
+	- Memoization (`once()` / `Cache::memo()`) reuses a result inside one HTTP request only, then it is gone.
+	- Redis `remember()` stores a result in a shared store across requests, so later traffic can reuse it until TTL ends or the key is forgotten.
+9. Why can a shared Redis key for user-specific data be dangerous?
+	- A shared key like `profile` can return User A's data to User B. User-specific data needs the user id in the key, for example `user.profile.17` or `user.profile.'.auth()->id()`.
+10. Why can we use cache tags now, when a `database` cache store could not?
+	- The `database` and `file` cache drivers do not support tags. Redis does, so we can group related keys and flush a group without calling `Cache::flush()` on everything.
