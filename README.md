@@ -26,3 +26,7 @@
 	- A shared key like `profile` can return User A's data to User B. User-specific data needs the user id in the key, for example `user.profile.17` or `user.profile.'.auth()->id()`.
 10. Why can we use cache tags now, when a `database` cache store could not?
 	- The `database` and `file` cache drivers do not support tags. Redis does, so we can group related keys and flush a group without calling `Cache::flush()` on everything.
+
+## Mini Project Answers
+### 1. Protect rebuild with Cache::lock(...)
+	- Chosen `Cache::lock` inside remember(), because dashboard rebuild should not run in parallel when many requests miss at once. I did not use flexible() or tags for this endpoint.
