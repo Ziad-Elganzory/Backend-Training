@@ -29,4 +29,8 @@ class ProductCatalogService
             ];
         });
     }
+
+    public function refreshProductsCatalogCache() {
+        Cache::forget('products.catalog.v1');
+    }
 }

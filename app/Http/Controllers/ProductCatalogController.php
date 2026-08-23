@@ -9,6 +9,12 @@ class ProductCatalogController extends Controller
 {
     public function __construct(private ProductCatalogService $productCatalogService){}
     public function index(){
-        return $this->productCatalogService->getProducts();
+        return response()->json($this->productCatalogService->getProducts());
+    }
+    public function refresh(){
+        $this->productCatalogService->refreshProductsCatalogCache();
+        return response()->json([
+            "message" => "Products Catalog Refreshed Successfully"
+        ]);
     }
 }

@@ -9,3 +9,4 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/products/catalog',[ProductCatalogController::class,'index']);
+Route::post('/products/catalog/refresh',[ProductCatalogController::class,'refresh']);
