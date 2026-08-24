@@ -1,32 +1,132 @@
-## Answer in your own words:
+# Micro Tasks
 
-1. What problem does caching solve?
-	- Caching avoids repeating expensive work (like the same DB query) on every request by storing the result temporarily under a key and reusing it until it expires or is invalidated.
-2. What is a cache hit and a cache miss?
-	- Cache hit: the key exists in the store and is still valid, so we return the saved value and skip the expensive work.
-	- Cache miss: the key is missing or expired, so we must compute the value, store it, then return it.
-3. Why is Redis a good cache store for this project?
-	- Redis keeps data in memory (fast), supports tags and locks, and can be shared by all Sail/PHP workers — better than database/file cache for this lesson and for production-style caching.
-4. Why is `Cache::remember()` better than manual get/put?
-	- `remember()` does get-or-compute-and-put in one call, so the miss/hit flow stays in one place and you are less likely to forget the `put` step.
-5. What is cache invalidation, and why is it hard?
-	- Invalidation means deleting or refreshing a cached value when the real data changes (for example `Cache::forget()` or a tag flush). It is hard because you must know every related key, and wrong timing causes either stale data or too many rebuilds.
-6. What is a cache stampede?
-	- When a cache key expires and many requests miss at the same time, they all rebuild the expensive value together and overload the database. A Redis lock (or flexible refresh) lets one request rebuild while others wait or reuse.
-7. When should you avoid caching?
-	- When the data must be exact right now (money, stock, payment status, auth decisions)
-	- When user-specific data would sit under a shared key
-	- When the flow is write-heavy
-	- When the query is already tiny and cheap
-	- When you cannot invalidate safely
-8. What is the difference between request memoization and Redis `remember()`?
-	- Memoization (`once()` / `Cache::memo()`) reuses a result inside one HTTP request only, then it is gone.
-	- Redis `remember()` stores a result in a shared store across requests, so later traffic can reuse it until TTL ends or the key is forgotten.
-9. Why can a shared Redis key for user-specific data be dangerous?
-	- A shared key like `profile` can return User A's data to User B. User-specific data needs the user id in the key, for example `user.profile.17` or `user.profile.'.auth()->id()`.
-10. Why can we use cache tags now, when a `database` cache store could not?
-	- The `database` and `file` cache drivers do not support tags. Redis does, so we can group related keys and flush a group without calling `Cache::flush()` on everything.
+### Task 1:
 
-## Mini Project Answers
-### 1. Protect rebuild with Cache::lock(...)
-	- Chosen `Cache::lock` inside remember(), because dashboard rebuild should not run in parallel when many requests miss at once. I did not use flexible() or tags for this endpoint.
+1. Manual testing may miss regressions after refactors and is easy to forget in repeated checks.
+2. The Service because the core logic happens inside the service and the controller uses it
+
+### Task 2:
+
+1. Unit Test should not send http requests , should not require services running
+2. `ProductCatalogService::getProducts()`
+
+### Task 3:
+
+1. Ran the command
+
+```bash
+./vendor/bin/sail artisan test --compact
+```
+
+1. File `tests/Unit/ExampleTest.php` read
+2. `toBeTrue()` changed to `toBeFalse()` and it failed
+
+### Task 4:
+
+1. Arrange : Clear Cache state (`Cache:flush()`) and Instantiate `ProductCatalogService::class`
+2. Act: call `getProducts()` twice and store it in 2 variables
+3. Assert: that the 2 results have the same `generated_at` value
+
+
+
+### Task 5:
+
+```bash
+sail artisan make:test --pest --unit DashboardStatsServiceTest
+```
+
+
+
+### Task 6:
+
+1. Unit Test
+2. Integration Test
+3. Unit Test
+4. Integration Test
+
+
+
+### Task 7:
+
+1. Code added in `tests/Unit/ProductCatalogServiceTest.php`
+
+```php
+use Illuminate\Support\Facades\Cache;
+use App\Services\ProductCatalogService;
+
+uses(Tests\TestCase::class);
+
+beforeEach(function(){
+    Cache::flush();
+});
+
+it('stores the catalog in cache', function () {
+	$service = new ProductCatalogService();
+	$service->getProducts();
+
+	expect(Cache::has('products.catalog.v1'))->toBeTrue();
+});
+```
+
+
+
+### Task 8:
+
+1. Cache hit test added
+2. i added cache miss test too
+
+
+
+### Task 9:
+
+1. Test added `rebuilds the catalog after forget`
+
+
+
+### Task 10:
+
+1. Test added `returns products with generated_at`
+
+
+
+### Task 11:
+
+1. Tests use the in-memory array store so they stay fast, don’t need Sail Redis, and don’t read/write production cache keys.
+2. use a mock to isolate the code you are testing by replacing dependencies that are slow, unpredictable, or depend on external systems (like APIs, databases, or time).It guarantees your tests run instantly, predictably, and without side effects.
+
+
+
+### Task 12:
+
+- All test names are well typed and documented
+
+
+
+### Task 13:
+
+- [x] File named *Test.php
+
+- [x] uses(Tests\TestCase::class) present
+
+- [x] Cache::flush() used between tests
+
+- [x] No HTTP calls
+
+- [x] At least 3 focused tests
+
+### Task 14:
+1. i would unit test that `NotificationFacade` sends email, database notification , firebase notification and also test the failure cases
+2. i would unit-test that `ProductObserver` clears `products.catalog.v1` when product is saved `(CUD)` operations
+
+### Task 15:
+1. All tests passed after running
+```bash
+./vendor/bin/sail artisan test tests/Unit --compact
+```
+
+### Task 16:
+1. Testing Requests (Get,Post,Put,Delete)
+2. Testing Routes + Controller + Service Together
+3. Refresh Database with real DB
+4. `Http::fake()` for external APIs
+
