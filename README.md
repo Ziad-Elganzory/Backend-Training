@@ -130,3 +130,29 @@ it('stores the catalog in cache', function () {
 3. Refresh Database with real DB
 4. `Http::fake()` for external APIs
 
+## Lesson Questions :
+1. What is a unit test?
+	- Unit test is the process of testing each service method through assertions and protect the app refactoring process from breaking the logic
+2. How is a unit test different from an integration test?
+	- Unit Test tests the services (Busiess Logic) and ensure that each method is working as intended
+	- Integration Test: tests the endpoint , controller , service together to ensure the flow is working correctly
+3. Why do tests use the array cache store instead of Redis?
+	- because using array cache store is fast , reliable than testing real production redis store
+4. What is Arrange → Act → Assert?
+	- Arrange: is preparing the data we will test (eg. Time, Service, mocks and refrence shapes)
+	- Act: The process of firing the method that returns the intended data
+	- Assert: The step where we check the returned value match our expectation or not
+5. Why test `generated_at` staying the same on two calls?
+	- That means that it reades the cached object , also worth mentioning that forgeting the cach and rebuilding requires a time margin to get diffrent timestamp.
+6. What should your forget/refresh method do, and how do you prove it in a test?
+	- refresh methods delete the cache key from the cache store , so we test it by calling the service method and assert that `Cache::has($cacheKey)` is false
+7. Why do cache-related unit tests need `uses(Tests\TestCase::class)`?
+	- because the cache facade expects the laravel app to boot
+8. What belongs in `tests/Unit` vs `tests/Feature` in this training path?
+	- `tests/Unit` : Should include unit tests done on service classes
+	- `tests/Feature` : Should include feature , integration tests on endpoints, controllers , services together
+9. Why are behavior-based test names better than `test1` / `test catalog`?
+	- because naming the tests is documenting it so if a test fails , the reason appears clear and decribing what actually broke
+10. How do you isolate cache in unit tests without Redis, and how do you assert a key was stored?
+	- We isolate cache using the `phpunit.xml` file and setting the `CACHE_STORE` to `array` so the stored keys are stored away from production redis store
+	- we assert the keys using `Cache::has($cacheKey)`
