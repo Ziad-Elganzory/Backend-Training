@@ -6,8 +6,8 @@ beforeEach(function(){
     Cache::flush();
 });
 
-// Mini Practice
-it('returns the product catalog',function(){
+// Mini Project
+it('returns the dashboard stats',function(){
     $this->getJson('/api/dashboard/stats')
         ->assertSuccessful()
         ->assertJsonStructure(['generated_at','orders_count','revenue','currency'])
@@ -30,7 +30,7 @@ it('return the same generated_at on consecutive requests',function(){
     expect($second)->toBe($first);
 });
 
-it('clears the catalog cache on refresh',function(){
+it('clears the dashboard stats cache on refresh',function(){
     $this->travelTo(now());
 
     $first = $this->getJson('/api/dashboard/stats')

@@ -155,7 +155,7 @@ why do the catalog/stats API tests in this lesson skip `RefreshDatabase`?
 2. How is it different from the unit tests you wrote in lesson 13?
     - unit testing tests the service methods working or not while integration testing tests the enpoint using http requests
 3. Why do these tests live in `tests/Feature`?
-    - because the feature tests already boot laravel through `tests/Pest.php`
+    - HTTP / feature tests live in Feature by convention.
 4. Why must the URL include `/api`?
     - because it's the api prefix used in the `api.php` route file 
 5. What does `assertSuccessful()` check?
