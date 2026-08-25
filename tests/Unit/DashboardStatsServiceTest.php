@@ -14,9 +14,8 @@ it('return dashboard stats with keys',function(){
 
     $result = $service->getDashboardStats();
 
-    expect($result)
-        ->toHaveKeys(['generated_at','orders_count','revenue','currency'])
-        ->and($result)->not->toBeNull();
+    expect($result)->not->toBeNull()
+        ->and($result)->toHaveKeys(['generated_at','orders_count','revenue','currency']);
 });
 
 it('stores dashboard stats in cache',function(){

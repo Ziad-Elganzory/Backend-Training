@@ -3,7 +3,6 @@
 use App\Services\ProductCatalogService;
 use Illuminate\Support\Facades\Cache;
 
-use function Illuminate\Support\seconds;
 
 uses(Tests\TestCase::class);
 
@@ -11,7 +10,7 @@ beforeEach(function(){
     Cache::flush();
 });
 
-it('it returns products with generated_at',function(){
+it('returns products with generated_at',function(){
     $service = new ProductCatalogService();
 
     $result = $service->getProducts();
@@ -22,7 +21,7 @@ it('it returns products with generated_at',function(){
         ->and($result['products'][0])->toHaveKeys(['id','name','price']);
 });
 
-it('it stores the catalog in cache',function(){
+it('stores the catalog in cache',function(){
     $service = new ProductCatalogService();
 
     $service->getProducts();
@@ -30,7 +29,7 @@ it('it stores the catalog in cache',function(){
     expect(Cache::has('products.catalog.v1'))->toBeTrue();
 });
 
-it('it returns the same generated_at on a cache hit',function(){
+it('returns the same generated_at on a cache hit',function(){
     $this->travelTo(now());
     $service = new ProductCatalogService();
 
@@ -43,12 +42,14 @@ it('it returns the same generated_at on a cache hit',function(){
     expect($first['generated_at'])->toBe($second['generated_at']);
 });
 
-it('it rebuilds the catalog after forget',function(){
+it('rebuilds the catalog after forget',function(){
     $this->travelTo(now());
     $service = new ProductCatalogService();
 
     $first = $service->getProducts();
     $service->refreshProductsCatalogCache();
+    expect(Cache::has('products.catalog.v1'))->toBeFalse();
+
 
     $this->travel(30)->seconds();
     $second = $service->getProducts();

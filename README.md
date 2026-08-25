@@ -145,7 +145,7 @@ it('stores the catalog in cache', function () {
 5. Why test `generated_at` staying the same on two calls?
 	- That means that it reades the cached object , also worth mentioning that forgeting the cach and rebuilding requires a time margin to get diffrent timestamp.
 6. What should your forget/refresh method do, and how do you prove it in a test?
-	- refresh methods delete the cache key from the cache store , so we test it by calling the service method and assert that `Cache::has($cacheKey)` is false
+	- refresh methods deletes the key. Prove it with `Cache::has` false after forget, then call the getter again and assert a new generated_at.
 7. Why do cache-related unit tests need `uses(Tests\TestCase::class)`?
 	- because the cache facade expects the laravel app to boot
 8. What belongs in `tests/Unit` vs `tests/Feature` in this training path?
