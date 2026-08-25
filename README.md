@@ -1,158 +1,151 @@
-# Micro Tasks
+## Micro Tasks
 
 ### Task 1:
-
-1. Manual testing may miss regressions after refactors and is easy to forget in repeated checks.
-2. The Service because the core logic happens inside the service and the controller uses it
-
-### Task 2:
-
-1. Unit Test should not send http requests , should not require services running
-2. `ProductCatalogService::getProducts()`
-
-### Task 3:
-
-1. Ran the command
-
+1. What can break even when all unit tests pass?
+	- Wrong rout path
+	- Controller Returns wrong json shape
+	- endpoint forgets to call the service
+	- prefix missing in the url
+	- different response status code
+2. Name one URL you will test in this lesson.
 ```bash
-./vendor/bin/sail artisan test --compact
+GET /api/products/catalog
 ```
 
-1. File `tests/Unit/ExampleTest.php` read
-2. `toBeTrue()` changed to `toBeFalse()` and it failed
+## Task 2:
+1. Which folder should `ProductCatalogApiTest.php` live in?
+	- it lives under `tests/Feature` directory
+2. What is the difference between testing `getProducts()` directly vs `GET /api/products/catalog`?
+	- testing ``getProducts()` directly tests the service business logic that runs under the hood
+	- testing `GET /api/products/catalog` tests the user facing problems
 
-### Task 4:
-
-1. Arrange : Clear Cache state (`Cache:flush()`) and Instantiate `ProductCatalogService::class`
-2. Act: call `getProducts()` twice and store it in 2 variables
-3. Assert: that the 2 results have the same `generated_at` value
-
-
-
-### Task 5:
-
+##  Task 3:
 ```bash
-sail artisan make:test --pest --unit DashboardStatsServiceTest
+sail artisan make:test --pest DashboardStatsApiTest
 ```
 
-
-
-### Task 6:
-
-1. Unit Test
-2. Integration Test
-3. Unit Test
-4. Integration Test
-
-
-
-### Task 7:
-
-1. Code added in `tests/Unit/ProductCatalogServiceTest.php`
-
+## Task 4:
 ```php
-use Illuminate\Support\Facades\Cache;
-use App\Services\ProductCatalogService;
-
-uses(Tests\TestCase::class);
-
-beforeEach(function(){
-    Cache::flush();
-});
-
-it('stores the catalog in cache', function () {
-	$service = new ProductCatalogService();
-	$service->getProducts();
-
-	expect(Cache::has('products.catalog.v1'))->toBeTrue();
+it('returns the product catalog',function(){
+    $this->getJson('/api/products/catalog')
+	->assertSuccessful()
+	->assertJsonStructure(['generated_at','products']);
 });
 ```
 
+## Task 5:
+```php
+it('returns the same generated_at on consecutive requests',function(){
+	// Arrange
+    $this->travelTo(now());
+    //Act
+    $firstResponse = $this->getJson('/api/products/catalog')
+        ->assertSuccessful()
+        ->json('generated_at');
+    $this->travel(30)->second();
+    $secondResponse = $this->getJson('/api/products/catalog')
+        ->assertSuccessful()
+        ->json('generated_at');
+    // Assert
+    expect($firstResponse)->toBe($secondResponse);
+});
+```
 
+## Task 6:
+```php
 
-### Task 8:
+it('returns the product catalog',function(){
+    $this->getJson('/api/products/catalog')
+        ->assertSuccessful()
+        ->assertJsonStructure([
+            'generated_at',
+            'products'=>[
+                ['id','name','price']
+            ]
+        ]);
+});
+```
 
-1. Cache hit test added
-2. i added cache miss test too
+## Task 7:
+```php
+it('returns the same generated_at on consecutive requests',function(){
+	// Arrange
+    $this->travelTo(now());
+    //Act
+    $firstResponse = $this->getJson('/api/products/catalog')
+        ->assertSuccessful()
+        ->json('generated_at');
+    $this->travel(30)->second();
+    $secondResponse = $this->getJson('/api/products/catalog')
+        ->assertSuccessful()
+        ->json('generated_at');
+    // Assert
+    expect($firstResponse)->toBe($secondResponse);
+});
+```
 
+## Task 8:
+```php
+it('clears the catalog cache on refresh',function(){
+    $this->travelTo(now());
 
+    $first = $this->getJson('/api/products/catalog')
+        ->assertSuccessful()
+        ->json('generated_at');
 
-### Task 9:
+    $this->postJson('/api/products/catalog/refresh')
+        ->assertSuccessful()
+        ->assertJson(['message' => 'Products Catalog Refreshed Successfully']);
 
-1. Test added `rebuilds the catalog after forget`
+    $this->travel(1)->second();
 
+    $second = $this->getJson('/api/products/catalog')
+        ->assertSuccessful()
+        ->json('generated_at');
+    
+    expect($second)->not->toBe($first);
+});
+```
 
+## Task 9:
+1. Answer in one sentence: when would you use `assertJsonPath` vs `json()` + `expect()`?
+	- use `assertJsonPath` when you want the error tied to the http response
+	- use `json()` + `expect()` when you compare values across the requests
 
-### Task 10:
+## Task 10:
+1. Give one example bug that only an integration test would catch in this project.
+	- Controller returns wrong keys
 
-1. Test added `returns products with generated_at`
+## Task 11:
+why do the catalog/stats API tests in this lesson skip `RefreshDatabase`?
+	- Because we use `RefreshDatabase` when we deal with models, migrations , db reads and writes but for this lesson we're deal with caching concepts only.
 
+## Task 12:
+1. Answer in one sentence: why is `Http::fake()` useful in integration tests, but not needed for `/api/products/catalog` today?
 
+	- `Http::fake()` is useful when dealing with third party services (eg. Payment gateway, shipping api, sms providers), for now we're dealing with caching concepts.
 
-### Task 11:
-
-1. Tests use the in-memory array store so they stay fast, don’t need Sail Redis, and don’t read/write production cache keys.
-2. use a mock to isolate the code you are testing by replacing dependencies that are slow, unpredictable, or depend on external systems (like APIs, databases, or time).It guarantees your tests run instantly, predictably, and without side effects.
-
-
-
-### Task 12:
-
-- All test names are well typed and documented
-
-
-
-### Task 13:
-
-- [x] File named *Test.php
-
-- [x] uses(Tests\TestCase::class) present
-
-- [x] Cache::flush() used between tests
-
-- [x] No HTTP calls
-
+## Task 13:
+- [x] File is under `tests/Feature`
+- [x] URLs start with `/api`
+- [x] Uses `getJson` / `postJson`
+- [x] No direct `new ProductCatalogService()` (for HTTP tests)
 - [x] At least 3 focused tests
 
-### Task 14:
-1. i would unit test that `NotificationFacade` sends email, database notification , firebase notification and also test the failure cases
-2. i would unit-test that `ProductObserver` clears `products.catalog.v1` when product is saved `(CUD)` operations
+## Task 14:
+- In two sentences, explain how lesson 13 and lesson 14 test the same cache hit behavior differently.
 
-### Task 15:
-1. All tests passed after running
+    - lesson 13 test the cache hit by testing the `getProducts()` service method directly twice and checking that they have the same `generated_at` value
+    - lesson 14 test the cache hit by sending a get request to `/api/products/catalog` twice and both retrive the same `generated_at` value
+
+## Task 15:
+- All Features passed when running
 ```bash
-./vendor/bin/sail artisan test tests/Unit --compact
+./vendor/bin/sail artisan test tests/Feature --compact
 ```
 
-### Task 16:
-1. Testing Requests (Get,Post,Put,Delete)
-2. Testing Routes + Controller + Service Together
-3. Refresh Database with real DB
-4. `Http::fake()` for external APIs
+## Task 16:
+- name one test you would not write in this lesson but would write after you add authenticated order APIs.
 
-## Lesson Questions :
-1. What is a unit test?
-	- Unit test is the process of testing each service method through assertions and protect the app refactoring process from breaking the logic
-2. How is a unit test different from an integration test?
-	- Unit Test tests the services (Busiess Logic) and ensure that each method is working as intended
-	- Integration Test: tests the endpoint , controller , service together to ensure the flow is working correctly
-3. Why do tests use the array cache store instead of Redis?
-	- because using array cache store is fast , reliable than testing real production redis store
-4. What is Arrange → Act → Assert?
-	- Arrange: is preparing the data we will test (eg. Time, Service, mocks and refrence shapes)
-	- Act: The process of firing the method that returns the intended data
-	- Assert: The step where we check the returned value match our expectation or not
-5. Why test `generated_at` staying the same on two calls?
-	- That means that it reades the cached object , also worth mentioning that forgeting the cach and rebuilding requires a time margin to get diffrent timestamp.
-6. What should your forget/refresh method do, and how do you prove it in a test?
-	- refresh methods deletes the key. Prove it with `Cache::has` false after forget, then call the getter again and assert a new generated_at.
-7. Why do cache-related unit tests need `uses(Tests\TestCase::class)`?
-	- because the cache facade expects the laravel app to boot
-8. What belongs in `tests/Unit` vs `tests/Feature` in this training path?
-	- `tests/Unit` : Should include unit tests done on service classes
-	- `tests/Feature` : Should include feature , integration tests on endpoints, controllers , services together
-9. Why are behavior-based test names better than `test1` / `test catalog`?
-	- because naming the tests is documenting it so if a test fails , the reason appears clear and decribing what actually broke
-10. How do you isolate cache in unit tests without Redis, and how do you assert a key was stored?
-	- We isolate cache using the `phpunit.xml` file and setting the `CACHE_STORE` to `array` so the stored keys are stored away from production redis store
-	- we assert the keys using `Cache::has($cacheKey)`
+    - Testing auth on `/api/user` that checks if user is authenticated
+
