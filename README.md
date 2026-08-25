@@ -12,19 +12,19 @@
 GET /api/products/catalog
 ```
 
-## Task 2:
+### Task 2:
 1. Which folder should `ProductCatalogApiTest.php` live in?
 	- it lives under `tests/Feature` directory
 2. What is the difference between testing `getProducts()` directly vs `GET /api/products/catalog`?
 	- testing ``getProducts()` directly tests the service business logic that runs under the hood
 	- testing `GET /api/products/catalog` tests the user facing problems
 
-##  Task 3:
+###  Task 3:
 ```bash
 sail artisan make:test --pest DashboardStatsApiTest
 ```
 
-## Task 4:
+### Task 4:
 ```php
 it('returns the product catalog',function(){
     $this->getJson('/api/products/catalog')
@@ -33,7 +33,7 @@ it('returns the product catalog',function(){
 });
 ```
 
-## Task 5:
+### Task 5:
 ```php
 it('returns the same generated_at on consecutive requests',function(){
 	// Arrange
@@ -51,7 +51,7 @@ it('returns the same generated_at on consecutive requests',function(){
 });
 ```
 
-## Task 6:
+### Task 6:
 ```php
 
 it('returns the product catalog',function(){
@@ -66,7 +66,7 @@ it('returns the product catalog',function(){
 });
 ```
 
-## Task 7:
+### Task 7:
 ```php
 it('returns the same generated_at on consecutive requests',function(){
 	// Arrange
@@ -84,7 +84,7 @@ it('returns the same generated_at on consecutive requests',function(){
 });
 ```
 
-## Task 8:
+### Task 8:
 ```php
 it('clears the catalog cache on refresh',function(){
     $this->travelTo(now());
@@ -107,45 +107,67 @@ it('clears the catalog cache on refresh',function(){
 });
 ```
 
-## Task 9:
+### Task 9:
 1. Answer in one sentence: when would you use `assertJsonPath` vs `json()` + `expect()`?
 	- use `assertJsonPath` when you want the error tied to the http response
 	- use `json()` + `expect()` when you compare values across the requests
 
-## Task 10:
+### Task 10:
 1. Give one example bug that only an integration test would catch in this project.
 	- Controller returns wrong keys
 
-## Task 11:
+### Task 11:
 why do the catalog/stats API tests in this lesson skip `RefreshDatabase`?
 	- Because we use `RefreshDatabase` when we deal with models, migrations , db reads and writes but for this lesson we're deal with caching concepts only.
 
-## Task 12:
+### Task 12:
 1. Answer in one sentence: why is `Http::fake()` useful in integration tests, but not needed for `/api/products/catalog` today?
 
 	- `Http::fake()` is useful when dealing with third party services (eg. Payment gateway, shipping api, sms providers), for now we're dealing with caching concepts.
 
-## Task 13:
+### Task 13:
 - [x] File is under `tests/Feature`
 - [x] URLs start with `/api`
 - [x] Uses `getJson` / `postJson`
 - [x] No direct `new ProductCatalogService()` (for HTTP tests)
 - [x] At least 3 focused tests
 
-## Task 14:
+### Task 14:
 - In two sentences, explain how lesson 13 and lesson 14 test the same cache hit behavior differently.
 
     - lesson 13 test the cache hit by testing the `getProducts()` service method directly twice and checking that they have the same `generated_at` value
     - lesson 14 test the cache hit by sending a get request to `/api/products/catalog` twice and both retrive the same `generated_at` value
 
-## Task 15:
+### Task 15:
 - All Features passed when running
 ```bash
 ./vendor/bin/sail artisan test tests/Feature --compact
 ```
 
-## Task 16:
+### Task 16:
 - name one test you would not write in this lesson but would write after you add authenticated order APIs.
 
     - Testing auth on `/api/user` that checks if user is authenticated
 
+## Lesson Questions:
+1. What is an integration test in this Laravel lesson?
+    - integration test is testing the endpoints flow , controllers and services together to make sure that the user facing flow is working as intended
+2. How is it different from the unit tests you wrote in lesson 13?
+    - unit testing tests the service methods working or not while integration testing tests the enpoint using http requests
+3. Why do these tests live in `tests/Feature`?
+    - because the feature tests already boot laravel through `tests/Pest.php`
+4. Why must the URL include `/api`?
+    - because it's the api prefix used in the `api.php` route file 
+5. What does `assertSuccessful()` check?
+    - Checks if the response succeeded with any 2xx success codes
+6. Why test `generated_at` staying the same across two HTTP GET requests?
+    - because the `generated_at` is returned from cache so they have the same value
+7. What should the refresh endpoint prove in an integration test?
+    - it proves that the cache is removed when hitting the request so when doing 2 requests on the catalog , both will have 2 diffrent values
+8. Why do catalog/stats feature tests skip `RefreshDatabase`?
+    - because `RefreshDatabase` is used when dealing with models , migrations and real DB tables
+9. What bug can a feature test catch that a unit test cannot?
+    - invalid route defenition , Controller returns invalid structure that doesn't match , controller doesn't call the service , etc...
+10. When would you use `Http::fake()` in a future integration test?
+
+    - when we deal with third party services that requires faking the request
