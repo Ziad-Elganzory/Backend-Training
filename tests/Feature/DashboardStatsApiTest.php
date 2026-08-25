@@ -14,7 +14,7 @@ it('returns the dashboard stats',function(){
         ->assertJsonPath('currency','EGP');
 });
 
-it('return the same generated_at on consecutive requests',function(){
+it('returns the same generated_at on consecutive requests',function(){
     $this->travelTo(now());
 
     $first = $this->getJson('/api/dashboard/stats')

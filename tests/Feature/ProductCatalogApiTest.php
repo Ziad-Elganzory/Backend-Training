@@ -14,7 +14,7 @@ it('returns the product catalog',function(){
         ->assertJsonPath('products.0.name','Keyboard');
 });
 
-it('return the same generated_at on consecutive requests',function(){
+it('returns the same generated_at on consecutive requests',function(){
     $this->travelTo(now());
 
     $first = $this->getJson('/api/products/catalog')
