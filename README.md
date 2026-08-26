@@ -1,58 +1,58 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Micro Tasks
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+### Task 1:
+1. What is incompatible in the Twilio vs Local example?
+    - Each Service speaks it's own language , both recive the same info but in diffrent ways
+2. What would go wrong if controllers talk to both SDKs directly?
+    - if we wanted to add a new sdk , that requires a huge modification in the core controller or service and scatterd logic.
 
-## About Laravel
+### Task 2:
+1. The interface your app owns is called the : Target Interface
+2. The foreign class being wrapped is called the : Adaptee
+3. The class that translates is called the : Adapter
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Task 3:
+- why is changing the adapter better than rewriting every controller when you switch SMS providers?
+    - to achive the open closed principle , where we add a new logic without doing modifications to the main controllers , services , jobs, etc...
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Task 4:
+- Why is composition (has-a) usually better than inheritance (is-a) for adapters in Laravel?
+    - because it decouples the adapter from the adapted service and allows behavior to change or swap dynamically at runtime
 
-## Learning Laravel
+### Task 5:
+- your `send($to, $message)` becomes which Local method? 
+    - it becomes `sendSms` in the LocalSmsClient class
+- which Local response field becomes your returned message id?
+    - `message_id` is the field returend
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Task 6:
+1. `CheckoutFacade::place()` calls inventory, payment, notifier : Facade Pattern
+2. `TwilioSmsAdapter` wraps Twilio’s SDK to match `SmsSender` : Adapter Pattern
+3. `PercentageDiscount` and `FixedDiscount` both implement `DiscountCalculator` : Strategy Pattern
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Task 7:
+- Why should `SmsController` depend on `SmsSender` / the factory, not `TwilioClient`?
+    - Controllers should depend on SmsSender so they never know Twilio method names. The factory (or container) chooses the adapter.
+### Task 8:
+- Write one good cache key for USD -> EGP rates, and one reason you would not cache a card charge result.
+    - key : `fx.USD.EGP.v1`
+    - don’t cache because each charge is a unique money move that must hit the provider now
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Task 9:
+Mark each as unit / feature:
 
-## Agentic Development
+1. Assert `TwilioSmsAdapter` maps `sid` -> return value : Unit Test
+2. `POST /api/sms/send` returns 200 JSON : Feature Test
+3. `Http::fake` response for a rates API used by an adapter : Unit Test
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Task 10:
+- Give one backend example from your work/study where Adapter fits, and one where it would be overkill.
 
-```bash
-composer require laravel/boost --dev
+    - Fits: When using multiple payment gateways sdks
+    - Overkill : a single internal MailService with one method and no foreign SDK — an adapter adds nothing.
 
-php artisan boost:install
-```
+### Task 11:
+- Fix this design smell in one sentence: `OrderController` calls `TwilioClient` and `LocalSmsClient` with if/else.
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    - Fix: move the service selection from if/else to adapter pattern so the controller doesn't know what provider our app currently using

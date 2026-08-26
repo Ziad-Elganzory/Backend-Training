@@ -34,5 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+    'sms' => [
+        'driver' => env('SMS_DRIVER','local'),
+        'twilio_from' => env('TWILIO_FROM','+10000000000'),
+        'sender_id' => env('SENDER_ID','OBJECTS')
+    ]
 ];
