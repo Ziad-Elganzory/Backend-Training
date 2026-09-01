@@ -56,3 +56,48 @@ Mark each as unit / feature:
 - Fix this design smell in one sentence: `OrderController` calls `TwilioClient` and `LocalSmsClient` with if/else.
 
     - Fix: move the service selection from if/else to adapter pattern so the controller doesn't know what provider our app currently using
+
+## Questions:
+1. What problem does Adapter Pattern solve?
+    - It solves interface incompatibility between existing third-party or legacy code (Adaptees) and your application's expected domain interface (Target), allowing incompatible classes to work together without altering their source code.
+2. What are Target, Adaptee, and Adapter?
+    - Target: The interface or abstract class that your application code expects.
+    - Adaptee: The existing/foreign class/SDK that has an incompatible interface. (In your answer, you wrote "Adaptee is the client", which is incorrect).
+    - Adapter: The wrapper class that implements the Target interface and delegates calls to the Adaptee, translating parameters and return types.
+3. What is the difference between Adapter and Facade?
+    - Adapter: Hides the incombatibility
+    - Facade: hides the complexity
+4. What is the difference between Adapter and Strategy?
+    - Both can look the same but
+        - Adapter:
+            - foreign api exists
+            - wrap it to match the interface
+        - Strategy:
+            - we design the interface
+            - we write the algorithms to match it
+5. Why should controllers depend on your interface, not the vendor SDK?
+    - because the vendor sdk can look diffrent, and when we require to change the client , we also change the logic inside the controller.
+    since we want to apply the open closed principle , controller should write the logic once and when we want to add a new logic we don't modify the controller
+6. How can Factory help when you have multiple adapters?
+    - factory can choose the required adapter based on configuration (eg. Admin settings Dashboard , Selection flow , config file , etc...).
+7. When should you avoid Adapter?
+    - when we own the algorithms and we can change the class to match
+    - if there's only one call and no real mismatch
+    - if we are renaming methods with no translation needed (empty wrappers)
+    - if we actually need facade (many of our own services)
+8. How would you unit-test an adapter without calling a real third-party API?
+    - By mocking the client class and using the `shouldReceive` method to pass the args , then pass the mocked client to the real adapter class
+9. Where could caching fit with an adapter, and what should you not cache?
+
+    - Where caching fits:
+        - Inside the adapter directly: The adapter receives a request, checks a local/distributed cache first returns the cached result if available, or fetches from the target API on a miss and saves the response.
+        - At the adapter boundary: Placed directly before calling the external adaptee service to store normalized domain models for your system.
+        
+    - What to avoid caching:
+        - Sensitive data: Passwords, payment details, PII, or security tokens.
+        - Real-time / highly volatile data: Stock ticks, live sensor metrics, or rapidly updating inventory.
+        - State-changing operations: Non-idempotent actions (POST, PUT, DELETE).
+        - Unscoped user data: Personal multi-tenant responses that risk leaking across users.
+        - Low-reuse queries: One-off, highly specific searches or giant single-use analytics exports.
+10. Give one Laravel backend example of Adapter in production systems.
+    - If we have multiple payment providers (Paymob, Stripe, etc...) and we want to unify the usage methods and swap the service using config or simillar approaches
