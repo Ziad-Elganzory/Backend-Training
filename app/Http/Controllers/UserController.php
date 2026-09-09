@@ -117,4 +117,21 @@ class UserController extends Controller
             ],400);
         }
     }
+
+    public function paginated(Request $request)
+    {
+        try{
+
+            $users = $this->userService->paginated($request->query('perPage',10));
+            return response()->json($users->items());
+
+        } catch(Exception $e){
+
+            return response()->json([
+                "error" => "Error occured during users fetching",
+                "message" => $e->getMessage()
+            ],400);
+
+        }
+    }
 }

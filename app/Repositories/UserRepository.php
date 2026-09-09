@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Contracts\UserRepositoryInterface;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Override;
 
 class UserRepository implements UserRepositoryInterface
@@ -35,5 +36,10 @@ class UserRepository implements UserRepositoryInterface
     public function find(int $id): ?User
     {
         return User::find($id);
+    }
+    #[Override]
+    public function paginatedUsers(int $pages): LengthAwarePaginator
+    {
+        return User::paginate($pages);
     }
 }

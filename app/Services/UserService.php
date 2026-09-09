@@ -33,4 +33,9 @@ class UserService
     {
         return $this->userRepository->find($id);
     }
+
+    public function paginated(int $pages)
+    {
+        return $this->userRepository->paginatedUsers($pages);
+    }
 }

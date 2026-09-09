@@ -15,3 +15,6 @@ Route::prefix('/users')->group(function(){
     Route::put('/{id}',[UserController::class,'update']);
     Route::delete('/{id}',[UserController::class,'destroy']);
 });
+
+// Mini Practice
+Route::get('/paginated/users',[UserController::class,'paginated']);
