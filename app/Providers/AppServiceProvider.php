@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Contracts\Contracts\GreetingFormatter;
 use App\Contracts\Contracts\PaymentGateway;
+use App\Services\FriendlyGreetingFormatter;
 use App\Services\Payment\FakePaymentGateway;
 use App\Services\Payment\PaymobPaymentGateway;
 use Illuminate\Support\ServiceProvider;
@@ -23,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
         //     PaymentGateway::class,
         //     FakePaymentGateway::class
         // );
+
+        $this->app->bind(GreetingFormatter::class,FriendlyGreetingFormatter::class);
     }
 
     /**
